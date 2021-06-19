@@ -73,7 +73,7 @@ namespace OpenTabletDriver.Plugin.Output
                 sensitivity.Y * ((digitizer?.Height / digitizer?.MaxY) ?? 0.01f));
         }
 
-        protected override ITabletReport Transform(ITabletReport report)
+        protected override IAbsolutePositionReport Transform(IAbsolutePositionReport report)
         {
             var deltaTime = stopwatch.Restart();
 
@@ -94,7 +94,7 @@ namespace OpenTabletDriver.Plugin.Output
 
         protected override void OnOutput(IDeviceReport report)
         {
-            if (report is ITabletReport tabletReport && Tablet.Properties.Specifications.Pen.ActiveReportID.IsInRange(tabletReport.ReportID))
+            if (report is IAbsolutePositionReport tabletReport)
             {
                 Pointer.Translate(tabletReport.Position);
             }

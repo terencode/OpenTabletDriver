@@ -91,15 +91,38 @@ namespace OpenTabletDriver.UX.Controls
                             new TableCell
                             {
                                 ScaleWidth = true,
-                                Control = new Group
+                                Control = new StackLayout
                                 {
-                                    Text = "Pen Button Bindings",
-                                    Content = new Scrollable
+                                    HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                                    Items =
                                     {
-                                        Border = BorderType.None,
-                                        Content = penButtons = new BindingDisplayList
+                                        new Group
                                         {
-                                            Prefix = "Pen Button"
+                                            Text = "Pen Button Bindings",
+                                            Content = new Scrollable
+                                            {
+                                                Border = BorderType.None,
+                                                Content = penButtons = new BindingDisplayList
+                                                {
+                                                    Prefix = "Pen Button"
+                                                }
+                                            }
+                                        },
+                                        new StackLayoutItem
+                                        {
+                                            Expand = true,
+                                            Control = new Group
+                                            {
+                                                Text = "Mouse Button Bindings",
+                                                Content = new Scrollable
+                                                {
+                                                    Border = BorderType.None,
+                                                    Content = mouseButtons = new BindingDisplayList
+                                                    {
+                                                        Prefix = "Mouse Button"
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -131,11 +154,12 @@ namespace OpenTabletDriver.UX.Controls
             eraserPressure.ValueBinding.Bind(SettingsBinding.Child(c => c.EraserActivationPressure));
             penButtons.ItemSourceBinding.Bind(SettingsBinding.Child(c => (IList<PluginSettingStore>)c.PenButtons));
             auxButtons.ItemSourceBinding.Bind(SettingsBinding.Child(c => (IList<PluginSettingStore>)c.AuxButtons));
+            mouseButtons.ItemSourceBinding.Bind(SettingsBinding.Child(c => (IList<PluginSettingStore>)c.MouseButtons));
         }
 
         private BindingDisplay tipButton, eraserButton;
         private FloatSlider tipPressure, eraserPressure;
-        private BindingDisplayList penButtons, auxButtons;
+        private BindingDisplayList penButtons, auxButtons, mouseButtons;
         
         private BindingSettings settings;
         public BindingSettings Settings

@@ -291,32 +291,31 @@ namespace OpenTabletDriver.Daemon
 
             if (settings.PenButtons != null)
             {
-                for (int index = 0; index < settings.PenButtons.Count; index++)
-                {
-                    var bind = settings.PenButtons[index]?.Construct<IBinding>();
-                    if (!bindingHandler.PenButtonBindings.TryAdd(index, bind))
-                    {
-                        bindingHandler.PenButtonBindings[index] = bind;
-                        bindingServiceProvider.Inject(bind);
-                    }
-                }
-
+                SetBindingHandlerCollectionSettings(bindingServiceProvider, settings.PenButtons, bindingHandler.PenButtonBindings);
                 Log.Write(group, $"Pen Bindings: " + string.Join(", ", bindingHandler.PenButtonBindings));
             }
 
             if (settings.AuxButtons != null)
             {
-                for (int index = 0; index < settings.AuxButtons.Count; index++)
-                {
-                    var bind = settings.AuxButtons[index]?.Construct<IBinding>();
-                    if (!bindingHandler.AuxButtonBindings.TryAdd(index, bind))
-                    {
-                        bindingHandler.AuxButtonBindings[index] = bind;
-                        bindingServiceProvider.Inject(bind);
-                    }
-                }
-
+                SetBindingHandlerCollectionSettings(bindingServiceProvider, settings.AuxButtons, bindingHandler.AuxButtonBindings);
                 Log.Write(group, $"Express Key Bindings: " + string.Join(", ", bindingHandler.AuxButtonBindings));
+            }
+
+            if (settings.MouseButtons != null)
+            {
+                SetBindingHandlerCollectionSettings(bindingServiceProvider, settings.MouseButtons, bindingHandler.MouseButtonBindings);
+                Log.Write(group, $"Mouse Button Bindings: " + string.Join(", ", bindingHandler.MouseButtonBindings));
+            }
+        }
+
+        private void SetBindingHandlerCollectionSettings(IServiceManager serviceManager, PluginSettingStoreCollection collection, Dictionary<int, IBinding> targetDict)
+        {
+            for (int index = 0; index < collection.Count; index++)
+            {
+                var bind = collection[index]?.Construct<IBinding>();
+                if(!targetDict.TryAdd(index, bind))
+                    targetDict[index] = bind;
+                serviceManager.Inject(bind);
             }
         }
 

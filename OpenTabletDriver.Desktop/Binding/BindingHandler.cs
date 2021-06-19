@@ -26,11 +26,13 @@ namespace OpenTabletDriver.Desktop.Binding
 
         public Dictionary<int, IBinding> PenButtonBindings { set; get; } = new Dictionary<int, IBinding>();
         public Dictionary<int, IBinding> AuxButtonBindings { set; get; } = new Dictionary<int, IBinding>();
+        public Dictionary<int, IBinding> MouseButtonBindings { set; get; } = new Dictionary<int, IBinding>();
 
         private bool TipState { set; get; } = false;
         private bool EraserState { set; get; } = false;
         private IList<bool> PenButtonStates { get; } = new bool[2];
         private IList<bool> AuxButtonStates { get; } = new bool[8];
+        private IList<bool> MouseButtonStates { get; } = new bool[8];
 
         private IOutputMode outputMode;
 
@@ -48,10 +50,12 @@ namespace OpenTabletDriver.Desktop.Binding
                 return;
 
             var pen = tablet.Properties.Specifications.Pen;
-            if (report is ITabletReport tabletReport && pen.ActiveReportID.IsInRange(tabletReport.ReportID))
+            if (report is ITabletReport tabletReport)
                 HandleTabletReport(pen, tabletReport);
             if (report is IAuxReport auxReport)
                 HandleAuxiliaryReport(auxReport);
+            if (report is IMouseReport mouseReport)
+                HandleMouseReport(mouseReport);
         }
 
         private void HandleTabletReport(PenSpecifications pen, ITabletReport report)
@@ -76,6 +80,11 @@ namespace OpenTabletDriver.Desktop.Binding
         private void HandleAuxiliaryReport(IAuxReport report)
         {
             HandleBindingCollection(report, AuxButtonStates, report.AuxButtons, AuxButtonBindings);
+        }
+
+        private void HandleMouseReport(IMouseReport report)
+        {
+            HandleBindingCollection(report, MouseButtonStates, report.MouseButtons, MouseButtonBindings);
         }
 
         private void HandleBindingCollection(IDeviceReport report, IList<bool> prevStates, IList<bool> newStates, IDictionary<int, IBinding> bindings)

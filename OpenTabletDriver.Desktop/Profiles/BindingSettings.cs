@@ -9,11 +9,13 @@ namespace OpenTabletDriver.Desktop.Profiles
     {
         private const int PEN_BUTTON_MAX = 2;
         private const int AUX_BUTTON_MAX = 8;
+        private const int MOUSE_BUTTON_MAX = 8;
 
         private float tP, eP;
         private PluginSettingStore tipButton, eraserButton;
         private PluginSettingStoreCollection penButtons = new PluginSettingStoreCollection(),
-            auxButtons = new PluginSettingStoreCollection();
+            auxButtons = new PluginSettingStoreCollection(),
+            mouseButtons = new PluginSettingStoreCollection();
 
         [JsonProperty("TipActivationPressure")]
         public float TipActivationPressure
@@ -57,6 +59,13 @@ namespace OpenTabletDriver.Desktop.Profiles
             get => this.auxButtons;
         }
 
+        [JsonProperty("MouseButtons")]
+        public PluginSettingStoreCollection MouseButtons
+        {
+            set => RaiseAndSetIfChanged(ref this.mouseButtons, value);
+            get => this.mouseButtons;
+        }
+
         public static BindingSettings GetDefaults()
         {
             return new BindingSettings
@@ -68,7 +77,16 @@ namespace OpenTabletDriver.Desktop.Profiles
                     }
                 ),
                 PenButtons = new PluginSettingStoreCollection().SetExpectedCount(PEN_BUTTON_MAX),
-                AuxButtons = new PluginSettingStoreCollection().SetExpectedCount(AUX_BUTTON_MAX)
+                AuxButtons = new PluginSettingStoreCollection().SetExpectedCount(AUX_BUTTON_MAX),
+                MouseButtons = new PluginSettingStoreCollection()
+                {
+                    new PluginSettingStore(
+                        new MouseBinding
+                        {
+                            Button = nameof(MouseButton.Left)
+                        }
+                    )
+                }.SetExpectedCount(MOUSE_BUTTON_MAX)
             };
         }
     }

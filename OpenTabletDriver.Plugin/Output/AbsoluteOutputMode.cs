@@ -118,7 +118,7 @@ namespace OpenTabletDriver.Plugin.Output
         /// Transposes, transforms, and performs all absolute positioning calculations to a <see cref="ITabletReport"/>.
         /// </summary>
         /// <param name="report">The <see cref="ITabletReport"/> in which to transform.</param>
-        protected override ITabletReport Transform(ITabletReport report)
+        protected override IAbsolutePositionReport Transform(IAbsolutePositionReport report)
         {
             // Apply transformation
             var pos = Vector2.Transform(report.Position, this.TransformationMatrix);
@@ -139,15 +139,15 @@ namespace OpenTabletDriver.Plugin.Output
         protected override void OnOutput(IDeviceReport report)
         {
             var pen = Tablet.Properties.Specifications.Pen;
-            if (report is ITabletReport tabletReport && pen.ActiveReportID.IsInRange(tabletReport.ReportID))
+            if (report is IAbsolutePositionReport absolutePositionReport)
             {
-                if (Pointer is IVirtualTablet pressureHandler)
+                if (report is ITabletReport tabletReport && Pointer is IVirtualTablet pressureHandler)
                 {
                     float normalizedPressure = (float)tabletReport.Pressure / (float)pen.MaxPressure;
                     pressureHandler.SetPressure(normalizedPressure);
                 }
 
-                Pointer.SetPosition(tabletReport.Position);
+                Pointer.SetPosition(absolutePositionReport.Position);
             }
         }
     }
