@@ -138,15 +138,8 @@ namespace OpenTabletDriver.Plugin.Output
 
         protected override void OnOutput(IDeviceReport report)
         {
-            var pen = Tablet.Properties.Specifications.Pen;
             if (report is IAbsolutePositionReport absolutePositionReport)
             {
-                if (report is ITabletReport tabletReport && Pointer is IVirtualTablet pressureHandler)
-                {
-                    float normalizedPressure = (float)tabletReport.Pressure / (float)pen.MaxPressure;
-                    pressureHandler.SetPressure(normalizedPressure);
-                }
-
                 Pointer.SetPosition(absolutePositionReport.Position);
             }
         }
